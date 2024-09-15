@@ -112,6 +112,11 @@ def run_screensaver(t=-1):
         else:
             screen.fill(Colors.black)
         text1,text2 = getCurrentTime()
+        jitterPerc = getFlipProgress(val)
+        if jitterPerc==0:
+            font = pygame.font.SysFont('helveticaneuecondensed', 600)
+        else:
+            font = pygame.font.SysFont('chiller', 600)
         text_surface1 = font.render(text1, True, Colors.grey)
         text_surface2 = font.render(text2, True, Colors.grey)
         
@@ -121,7 +126,6 @@ def run_screensaver(t=-1):
         glowing_surface1 = apply_glow_effect(sizzled_surface1)
         glowing_surface2 = apply_glow_effect(sizzled_surface2)
 
-        jitterPerc = getFlipProgress(val)
         oldJitter = jitterPerc
         jitter_x = jitter_intensity*jitterPerc
         jitter_y = jitter_intensity*jitterPerc
