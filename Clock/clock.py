@@ -13,6 +13,7 @@ class Colors:
     red = (200,0,0)
     blue = (0,0,255)
     CARD_COLOR = (30, 30, 30)
+    yellow = (255,255,0)
 
 def getCurrentTime():
     now = datetime.datetime.now().strftime("%H:%M")
@@ -83,7 +84,7 @@ card_pos2 = [card_pos1[0] + card_width + spacing_between_cards, card_pos1[1]]
 
 jitter_intensity = 50  # Max number of pixels for jitter (shaking effect)
 alpha_min, alpha_max = 150, 255  # Range for alpha (transparency) flickering
-glow_intensity = 0  # Glow effect radius # to be done later
+glow_intensity = 0  # Glow effect radius # Todo: to be done later
 
 clock = pygame.time.Clock()
 
@@ -99,7 +100,7 @@ def run_screensaver(t=-1):
     screen = pygame.display.set_mode((screen_width, screen_height))
     cT=0
     val=1
-    oldJitter = 0
+    jitterPerc = 0
     haltEvents = [pygame.MOUSEBUTTONDOWN, pygame.KEYDOWN, pygame.QUIT]
     textColour = gettextColour()
     while cT!=t:
@@ -107,10 +108,13 @@ def run_screensaver(t=-1):
             if event.type in haltEvents:
                 pygame.quit()
                 sys.exit()
-        if oldJitter !=0 and jitterPerc == 0:
-            screen.fill(Colors.red)
+        # Todo: To be redisigned later
+        if abs(jitterPerc)>0.9:
+            screen.fill(Colors.black)
+            CARD_COLOR = Colors.CARD_COLOR
         else:
             screen.fill(Colors.black)
+            CARD_COLOR = Colors.CARD_COLOR
         text1,text2 = getCurrentTime()
         jitterPerc = getFlipProgress(val)
         if jitterPerc==0:
@@ -119,24 +123,22 @@ def run_screensaver(t=-1):
             font = pygame.font.SysFont('chiller', 600)
         text_surface1 = font.render(text1, True, Colors.grey)
         text_surface2 = font.render(text2, True, Colors.grey)
-        
-        sizzled_surface1 = apply_sizzling_effect(text_surface1)
-        sizzled_surface2 = apply_sizzling_effect(text_surface2)
+        # Todo
+        # sizzled_surface1 = apply_sizzling_effect(text_surface1)
+        # sizzled_surface2 = apply_sizzling_effect(text_surface2)
+        # glowing_surface1 = apply_glow_effect(sizzled_surface1)
+        # glowing_surface2 = apply_glow_effect(sizzled_surface2)
 
-        glowing_surface1 = apply_glow_effect(sizzled_surface1)
-        glowing_surface2 = apply_glow_effect(sizzled_surface2)
-
-        oldJitter = jitterPerc
         jitter_x = jitter_intensity*jitterPerc
         jitter_y = jitter_intensity*jitterPerc
         # jitter_x = random.randint(-jitter_intensity, jitter_intensity)
         # jitter_y = random.randint(-jitter_intensity, jitter_intensity)
 
-        pygame.draw.rect(screen, Colors.CARD_COLOR, (card_pos1[0], card_pos1[1], card_width, card_height), border_radius=20)
-        pygame.draw.rect(screen, Colors.CARD_COLOR, (card_pos2[0], card_pos2[1], card_width, card_height), border_radius=20)
+        pygame.draw.rect(screen, CARD_COLOR, (card_pos1[0], card_pos1[1], card_width, card_height), border_radius=20)
+        pygame.draw.rect(screen, CARD_COLOR, (card_pos2[0], card_pos2[1], card_width, card_height), border_radius=20)
 
-        screen.blit(glowing_surface1, (card_pos1[0] + padding_x + jitter_x - glow_intensity, card_pos1[1] + padding_y + jitter_y - glow_intensity))
-        screen.blit(glowing_surface2, (card_pos2[0] + padding_x + jitter_x - glow_intensity, card_pos2[1] + padding_y + jitter_y - glow_intensity))
+        screen.blit(text_surface1, (card_pos1[0] + padding_x + jitter_x - glow_intensity, card_pos1[1] + padding_y + jitter_y - glow_intensity))
+        screen.blit(text_surface2, (card_pos2[0] + padding_x + jitter_x - glow_intensity, card_pos2[1] + padding_y + jitter_y - glow_intensity))
 
         pygame.display.flip()
 
