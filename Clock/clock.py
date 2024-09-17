@@ -60,8 +60,10 @@ screen_width = screen_info.current_w
 screen_height = screen_info.current_h
 screen = pygame.display.set_mode((screen_width, screen_height))
 
-
-font = pygame.font.SysFont('helveticaneuecondensed', 600)  # Customize the font and size
+r1 = 0.4231770833333333
+r2 = 0.7523148148148148
+fontSize = int(min(screen_width*r1, screen_height*r2))
+font = pygame.font.SysFont('helveticaneuecondensed', fontSize)  # Customize the font and size
 
 text1,text2 = getCurrentTime()
 text_surface1 = font.render(text1, True, Colors.grey)
@@ -97,7 +99,8 @@ def gettextColour():
 
 def run_screensaver(t=-1):
     # print(pygame.font.get_fonts())
-    screen = pygame.display.set_mode((screen_width, screen_height))
+    screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
+    pygame.mouse.set_visible(False)
     cT=0
     val=1
     jitterPerc = 0
@@ -118,9 +121,9 @@ def run_screensaver(t=-1):
         text1,text2 = getCurrentTime()
         jitterPerc = getFlipProgress(val)
         if jitterPerc==0:
-            font = pygame.font.SysFont('helveticaneuecondensed', 600)
+            font = pygame.font.SysFont('helveticaneuecondensed', fontSize)
         else:
-            font = pygame.font.SysFont('chiller', 600)
+            font = pygame.font.SysFont('chiller', fontSize)
         text_surface1 = font.render(text1, True, Colors.grey)
         text_surface2 = font.render(text2, True, Colors.grey)
         # Todo
