@@ -51,10 +51,10 @@ def getFont(i,timeText,sw,sh,selectedFont,renderer):
     r1 = 0.625
     r2 = 1.1111111111111112
     fontSize = int(min(sw*r1, sh*r2))
-    font = pygame.freetype.SysFont(selectedFont, fontSize)
+    font = pygame.font.SysFont(selectedFont, fontSize)
     text = timeText[i]
     text_color = Colors.grey
-    text_surface, _ = font.render(text, text_color)
+    text_surface = font.render(text, True, text_color)
     # sdl2_surface = pygame._sdl2.surface.Surface.from_surface(text_surface)
     text_texture = Texture.from_surface(renderer, text_surface)
     return text_texture
