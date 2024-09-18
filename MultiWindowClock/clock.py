@@ -21,7 +21,7 @@ def getCurrentTime(numberOfMonitors):
     now = datetime.datetime.now().strftime("%H:%M:%S:%x")
     now = now.split(":")
     if numberOfMonitors == 1:
-        now = [f"{now[0]}  {now[1]}"]
+        now = [f"{now[0]} : {now[1]}"]
     return now
 
 def getProgress(val):
@@ -38,6 +38,7 @@ def getProgress(val):
         minElapsed =  currentTime - prevMinute
         threshHold = 60
         return (minElapsed/threshHold)
+    return 0
 
 def getWindows():
     monitors = screeninfo.get_monitors()
@@ -51,15 +52,17 @@ def getFont(i,timeText,sw,sh,selectedFont,renderer):
     r1 = 0.625
     r2 = 1.1111111111111112
     fontSize = int(min(sw*r1, sh*r2))
-    font = pygame.font.SysFont(selectedFont, fontSize)
     text = timeText[i]
+    if(len(text)>2):
+        fontSize//=2
+    font = pygame.font.SysFont(selectedFont, fontSize)
     text_color = Colors.grey
     text_surface = font.render(text, True, text_color)
     # sdl2_surface = pygame._sdl2.surface.Surface.from_surface(text_surface)
     text_texture = Texture.from_surface(renderer, text_surface)
     return text_texture
 
-animation = "jitter"
+animation = "noAnimation"
 def run_screensaver():
     pygame.init()
     background_color = (0, 0, 0)
@@ -95,6 +98,8 @@ def run_screensaver():
             elif animation == "odometer":
                 pos1,pos2 = (sw//2), (sh//2)+jitter_y
                 # print(pos1,pos2,jitter_y,jitterPerc)
+            else:
+                pos1,pos2 = (sw//2), (sh//2)
             text_rect = text_texture.get_rect(center = (pos1,pos2))
             renderer.blit(text_texture, text_rect)
             renderer.present()
