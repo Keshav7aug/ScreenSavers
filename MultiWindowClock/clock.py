@@ -53,8 +53,7 @@ def getFont(i,timeText,sw,sh,selectedFont,renderer):
     r2 = 1.1111111111111112
     fontSize = int(min(sw*r1, sh*r2))
     text = timeText[i]
-    if(len(text)>2):
-        fontSize//=2
+    fontSize = (2*fontSize)//(len(text.replace(" ","")) - text.count(":"))
     font = pygame.font.SysFont(selectedFont, fontSize)
     text_color = Colors.grey
     text_surface = font.render(text, True, text_color)
