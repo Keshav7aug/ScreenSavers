@@ -41,6 +41,8 @@ def getProgress(val,fSH,monitorN):
 def getWindows():
     monitors = screeninfo.get_monitors()
     windows = []
+    monitors.sort(key=lambda x:x.x)
+    print(monitors)
     for monitor in monitors:
         window = Window(size=(monitor.width, monitor.height), position=(monitor.x, monitor.y))
         windows.append((Renderer(window), window))
@@ -60,6 +62,7 @@ def getAnimationArgs(val,fSH, monitorN):
 
 animation = "odometer"
 def run_screensaver():
+    global orientation
     pygame.init()
     background_color = (0, 0, 0)
     renderers = getWindows()
@@ -71,7 +74,6 @@ def run_screensaver():
     val = 1
     numberOfMonitors = len(renderers)
     fSH = 0
-    
     while running:
         for event in pygame.event.get():
             if event.type in haltEvents:
@@ -79,12 +81,15 @@ def run_screensaver():
         currentTime = getCurrentTime(numberOfMonitors)
         
         # for i,dispInfo in enumerate(renderers):
-        for j,i in enumerate(Orientation):
+        orientation = orientation[:numberOfMonitors]
+        timeInMS = time.time()
+        currentDateTime = datetime.now()
+        for j, i in enumerate(orientation):
             renderer, window = renderers[j]
             sw, sh = window.size
             renderer.clear()
             animator = classifier.classifyAnimation(animation)
-            animatedBoard = animator.animate(monitorNum=i, currentTime=currentTime, screenWidth=sw, screenHeight=sh, renderer=renderer)
+            animatedBoard = animator.animate(monitorNum=i, currentTime=currentTime, screenWidth=sw, screenHeight=sh, renderer=renderer, timeInMS=timeInMS,currentDateTime=currentDateTime)
             if animation == "jitter":
                 pos1,pos2 = (sw//2)+jitter_x, (sh//2)+jitter_y
             else:
@@ -95,7 +100,6 @@ def run_screensaver():
         clock.tick(60)
         val *= -1
     pygame.quit()
-
-Orientation = [2]
+orientation = [0,1,2,3]
 run_screensaver()
                 

@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 import pygame
 from pygame._sdl2 import Renderer, Window, Texture
 class Colors:
@@ -9,8 +9,7 @@ class Colors:
     blue = (0,0,255,255)
     CARD_COLOR = (30, 30, 30,255)
     yellow = (255,255,0,255)
-def getNextTime(monitorN):
-    currentTime = datetime.now()
+def getNextTime(monitorN, currentTime):
     if monitorN == 0:
         val = (currentTime+timedelta(hours=1)).hour
     elif monitorN == 1:
@@ -24,10 +23,10 @@ def getNextTime(monitorN):
 def getFont(isCurrentTime,i,timeText,sw,sh,selectedFont,renderer):
     r1 = 0.625
     r2 = 1.1111111111111112
-    fontSize = int(min(sw*r1, sh*r2))
+    fontSize = int(min(sw*r1, sh*r2))//2
     if isCurrentTime == False:
         text = f"{timeText}"
-        text_color = Colors.red
+        text_color = Colors.grey
     else:
         text = timeText[i]
         text_color = Colors.red
