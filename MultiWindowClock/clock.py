@@ -6,14 +6,17 @@ from pygame._sdl2 import Renderer, Window, Texture
 import time
 import math
 from Animations import classifier
-
+import argparse
+import sys
+debug = False
+orientation = [1]
 def getCurrentTime(numberOfMonitors):
     now = datetime.now().strftime("%H:%M:%S")
     theTime = now
     now = now.split(":")
     now.append(theTime)
-    # if numberOfMonitors == 1:
-    #     now = [f"{now[0]} : {now[1]}"]
+    if numberOfMonitors == 1:
+        now = [f"{now[0]} : {now[1]} : {now[2]}"]
     return now
 
 def getWindows():
@@ -62,6 +65,30 @@ def run_screensaver():
         clock.tick(60)
         val *= -1
     pygame.quit()
-orientation = [2]
-run_screensaver()
+
+def show_config():
+    pass
+
+def handle_arguments():
+    global orientation
+    if not debug:
+        orientation = list(range(4))
+    parser = argparse.ArgumentParser()
+    parser.add_argument('/s', action='store_true', help="Run the screensaver")
+    parser.add_argument('/c', action='store_true', help="Configure the screensaver")
+    parser.add_argument('/p', action='store_true', help="Preview the screensaver")
+
+    args = ""
+    if len(sys.argv)>1:
+        args = sys.argv[1].lower()
+    if args == "/s":  # Start screensaver
+        run_screensaver()
+    elif args == "/c":  # Configuration (if needed)
+        show_config()
+    elif args == "/p":  # Preview
+        run_screensaver()  # You can make a mini preview here
+    else:
+        run_screensaver()
+
+handle_arguments()
                 
