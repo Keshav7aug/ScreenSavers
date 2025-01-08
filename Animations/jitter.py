@@ -30,4 +30,4 @@ def animate(**kargs):
     posx,posy = (sw//2)+jitter_x, (sh//2)+jitter_y
     text_rect = text_texture.get_rect(centerx = posx, centery=posy)
 
-    return [[text_texture,text_rect]]
+    return {"data": [[text_texture,text_rect]], "args": {}}

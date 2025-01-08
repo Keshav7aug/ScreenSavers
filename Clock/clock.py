@@ -126,16 +126,9 @@ def run_screensaver(t=-1):
             font = pygame.font.SysFont('chiller', fontSize)
         text_surface1 = font.render(text1, True, Colors.grey)
         text_surface2 = font.render(text2, True, Colors.grey)
-        # Todo
-        # sizzled_surface1 = apply_sizzling_effect(text_surface1)
-        # sizzled_surface2 = apply_sizzling_effect(text_surface2)
-        # glowing_surface1 = apply_glow_effect(sizzled_surface1)
-        # glowing_surface2 = apply_glow_effect(sizzled_surface2)
 
         jitter_x = jitter_intensity*jitterPerc
         jitter_y = jitter_intensity*jitterPerc
-        # jitter_x = random.randint(-jitter_intensity, jitter_intensity)
-        # jitter_y = random.randint(-jitter_intensity, jitter_intensity)
 
         pygame.draw.rect(screen, CARD_COLOR, (card_pos1[0], card_pos1[1], card_width, card_height), border_radius=20)
         pygame.draw.rect(screen, CARD_COLOR, (card_pos2[0], card_pos2[1], card_width, card_height), border_radius=20)

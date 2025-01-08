@@ -14,8 +14,7 @@ def getCurrentTime(numberOfMonitors):
     now = datetime.now().strftime("%H:%M:%S")
     theTime = now
     now = now.split(":")
-    now.append(theTime)
-    if numberOfMonitors == 1:
+    if numberOfMonitors == 1 and not debug:
         now = [f"{now[0]} : {now[1]} : {now[2]}"]
     return now
 
@@ -23,30 +22,34 @@ def getWindows():
     monitors = screeninfo.get_monitors()
     windows = []
     monitors.sort(key=lambda x:x.x)
-    print(monitors)
     for monitor in monitors:
         window = Window(size=(monitor.width, monitor.height), position=(monitor.x, monitor.y))
         windows.append((Renderer(window), window))
     return windows
 
-animation = "jitter"
+def isItTimeToExit():
+    haltEvents = [pygame.MOUSEBUTTONDOWN, pygame.KEYDOWN, pygame.QUIT]
+    for event in pygame.event.get():
+        if event.type in haltEvents:
+            return True
+    return False
+
+animation = "odometer"
 def run_screensaver():
     global orientation
     pygame.init()
+    pygame.mouse.set_visible(False)
     background_color = (0, 0, 0)
     renderers = getWindows()
 
     clock = pygame.time.Clock()
     running = True
 
-    haltEvents = [pygame.MOUSEBUTTONDOWN, pygame.KEYDOWN, pygame.QUIT]
     val = 1
     numberOfMonitors = len(renderers)
     fSH = 0
-    while running:
-        for event in pygame.event.get():
-            if event.type in haltEvents:
-                running = False
+    animationArgs = {}
+    while not isItTimeToExit():
         currentTime = getCurrentTime(numberOfMonitors)
         
         # for i,dispInfo in enumerate(renderers):
@@ -54,13 +57,15 @@ def run_screensaver():
         timeInMS = time.time()
         currentDateTime = datetime.now()
         for j, i in enumerate(orientation):
+            if isItTimeToExit():
+                break
             renderer, window = renderers[j]
             sw, sh = window.size
             renderer.clear()
-            animator = classifier.classifyAnimation(animation)
-            animatedBoard = animator.animate(monitorNum=i, currentTime=currentTime, screenWidth=sw, screenHeight=sh, renderer=renderer, timeInMS=timeInMS,currentDateTime=currentDateTime, val=val)
-            for text_texture,text_rect in animatedBoard:
+            animatedBoard = classifier.applyAnimation(animations=animation, monitorNum=i, currentTime=currentTime, screenWidth=sw, screenHeight=sh, renderer=renderer, timeInMS=timeInMS,currentDateTime=currentDateTime, val=val, numberOfMonitors=numberOfMonitors, **animationArgs)
+            for text_texture,text_rect in animatedBoard["data"]:
                 renderer.blit(text_texture, text_rect)
+            animationArgs = animatedBoard["args"]
             renderer.present()
         clock.tick(60)
         val *= -1
@@ -90,5 +95,6 @@ def handle_arguments():
     else:
         run_screensaver()
 
-handle_arguments()
+if __name__ == "__main__":  
+    handle_arguments()
                 

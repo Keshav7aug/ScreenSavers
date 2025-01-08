@@ -10,6 +10,7 @@ class Colors:
     CARD_COLOR = (30, 30, 30,255)
     yellow = (255,255,0,255)
 def getNextTime(monitorN, currentTime):
+    val = 0
     if monitorN == 0:
         val = (currentTime+timedelta(hours=1)).hour
     elif monitorN == 1:
@@ -28,7 +29,11 @@ def getFont(isCurrentTime,i,timeText,sw,sh,selectedFont,renderer):
         text = f"{timeText}"
         text_color = Colors.grey
     else:
-        text = timeText[i]
+        if i>=len(timeText) or len(timeText)==1:
+            text = ' : '.join(timeText)
+            fontSize*=2
+        else:
+            text = timeText[i]
         text_color = Colors.red
     fontSize = (2*fontSize)//(len(text.replace(" ","")) - text.count(":"))
     font = pygame.font.SysFont(selectedFont, fontSize)
