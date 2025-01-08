@@ -8,8 +8,50 @@ import math
 from Animations import classifier
 import argparse
 import sys
+import tkinter as tk
+from tkinter import ttk
+from tkinter import simpledialog
+import json
+import os
+import pathlib
+
+config_dir = pathlib.Path(os.getenv("APPDATA"), "Clock_ScreenSaver")
+config_filepath = config_dir.joinpath("config_clock.json")
 debug = False
-orientation = [1]
+def loadOrientation():
+    if not os.path.exists(config_dir):
+        os.mkdir(config_dir)
+    if os.path.exists(config_filepath):
+        with open(config_filepath) as f:
+            orientation = json.loads(f.read())
+        return orientation
+    return []
+    
+def saveOrientation(orientation):
+    with open(config_filepath,"w") as f:
+        f.write(json.dumps(orientation, indent=2))
+def onSelect(i, combo):
+    orientation = loadOrientation()
+    orientation[i] = int(combo[i].get())
+    saveOrientation(orientation)
+
+def open_settings_dialog():
+    root = tk.Tk()
+    numberOfMonitors = len(screeninfo.get_monitors())
+    options = list(range(numberOfMonitors))
+    orientation = loadOrientation()
+    if len(options) != len(orientation):
+        orientation = options
+    saveOrientation(options)
+    combos = []
+    for i in range(numberOfMonitors): 
+        combo = ttk.Combobox(root, values=options)
+        combo.current(orientation[i])
+        combo.bind("<<ComboboxSelected>>", lambda _,idx=i : onSelect(idx, combos))
+        combos.append(combo)
+        combo.pack(pady=10)
+    root.mainloop()
+
 def getCurrentTime(numberOfMonitors):
     now = datetime.now().strftime("%H:%M:%S")
     theTime = now
@@ -36,7 +78,7 @@ def isItTimeToExit():
 
 animation = "odometer"
 def run_screensaver():
-    global orientation
+    orientation = loadOrientation()
     pygame.init()
     pygame.mouse.set_visible(False)
     background_color = (0, 0, 0)
@@ -75,9 +117,6 @@ def show_config():
     pass
 
 def handle_arguments():
-    global orientation
-    if not debug:
-        orientation = list(range(4))
     parser = argparse.ArgumentParser()
     parser.add_argument('/s', action='store_true', help="Run the screensaver")
     parser.add_argument('/c', action='store_true', help="Configure the screensaver")
@@ -86,14 +125,12 @@ def handle_arguments():
     args = ""
     if len(sys.argv)>1:
         args = sys.argv[1].lower()
+    if len(loadOrientation()) == 0 or "/c" in args:
+        open_settings_dialog()
     if args == "/s":  # Start screensaver
         run_screensaver()
-    elif args == "/c":  # Configuration (if needed)
-        show_config()
     elif args == "/p":  # Preview
         run_screensaver()  # You can make a mini preview here
-    else:
-        run_screensaver()
 
 if __name__ == "__main__":  
     handle_arguments()
