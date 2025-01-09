@@ -30,6 +30,14 @@ def loadOrientation():
 def saveOrientation(orientation):
     with open(config_filepath,"w") as f:
         f.write(json.dumps(orientation, indent=2))
+
+def init():
+    numberOfMonitors = len(screeninfo.get_monitors())
+    orientation = loadOrientation()
+    if len(orientation) != numberOfMonitors:
+        orientation = list(range(numberOfMonitors))
+    saveOrientation(orientation)
+    
 def onSelect(i, combo):
     orientation = loadOrientation()
     orientation[i] = int(combo[i].get())
@@ -125,10 +133,11 @@ def handle_arguments():
     args = ""
     if len(sys.argv)>1:
         args = sys.argv[1].lower()
-    if len(loadOrientation()) == 0 or "/c" in args:
-        open_settings_dialog()
     if args == "/s":  # Start screensaver
+        init()
         run_screensaver()
+    elif len(loadOrientation()) == 0 or "/c" in args:
+        open_settings_dialog()
     elif args == "/p":  # Preview
         run_screensaver()  # You can make a mini preview here
 
