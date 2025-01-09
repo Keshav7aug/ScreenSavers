@@ -22,20 +22,23 @@ def animate(**kargs):
     currentDateTime = kargs["currentDateTime"]
     timeInMS = kargs["timeInMS"]
     numberOfMonitors = kargs["numberOfMonitors"]
-    nextTime = getNextTime(monitorNum, currentDateTime)
+    whatToShow = kargs["whatToShow"]
+    shouldDisplayNext = whatToShow>0 and whatToShow<4
+    if shouldDisplayNext:
+        nextTime = getNextTime(whatToShow-1, currentDateTime)
     renderer.draw_color = Colors.black
-    fSH, text_texture = getFont(True,monitorNum,currentTime,sw,sh,selectedFont,renderer)
+    fSH, text_texture = getFont(True,monitorNum,currentTime,sw,sh,selectedFont,renderer,whatToShow,shouldDisplayNext)
     totalHeight = (sh-(fSH//2))
-    shouldDisplayNext = numberOfMonitors > 1 and monitorNum<=2
     if shouldDisplayNext:
         _,text_texture_next = getFont(False,monitorNum,nextTime,sw,sh,selectedFont,renderer)
     if shouldDisplayNext:
-        progress = getProgress(monitorNum,timeInMS)
+        progress = getProgress(whatToShow-1,timeInMS)
         jitter_y = progress*totalHeight
-        shouldDisplayNext = progress>0.5
+        thresh = 0.75
+        shouldDisplayNext = progress>thresh
         jitter_y1 = 0
         if shouldDisplayNext:
-            jitter_y1 = getProgress(monitorNum, timeInMS, 0.1)*totalHeight
+            jitter_y1 = getProgress(whatToShow-1, timeInMS, 1-thresh)*totalHeight
     else:
         jitter_y = (sh//2)-(fSH//2)
     posx,posy1 = (sw//2), (fSH//2)+jitter_y

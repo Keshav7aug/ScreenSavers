@@ -21,7 +21,16 @@ def getNextTime(monitorN, currentTime):
         return f"0{val}"
     return f"{val}"
 
-def getFont(isCurrentTime,i,timeText,sw,sh,selectedFont,renderer):
+def getTextToShow(timetext, whatToShow):
+    if whatToShow == 0:
+        text = ' : '.join(timetext)
+    elif whatToShow == 4:
+        text = ' : '.join(timetext[:2])
+    else:
+        text = timetext[whatToShow-1]
+    return text
+
+def getFont(isCurrentTime,i,timeText,sw,sh,selectedFont,renderer,whatToShow=None,shouldDisplayNext=None):
     r1 = 0.625
     r2 = 1.1111111111111112
     fontSize = int(min(sw*r1, sh*r2))//2
@@ -29,11 +38,9 @@ def getFont(isCurrentTime,i,timeText,sw,sh,selectedFont,renderer):
         text = f"{timeText}"
         text_color = Colors.grey
     else:
-        if i>=len(timeText) or len(timeText)==1:
-            text = ' : '.join(timeText)
+        if shouldDisplayNext == False:
             fontSize*=2
-        else:
-            text = timeText[i]
+        text = getTextToShow(timeText, whatToShow)
         text_color = Colors.red
     fontSize = (2*fontSize)//(len(text.replace(" ","")) - text.count(":"))
     font = pygame.font.SysFont(selectedFont, fontSize)

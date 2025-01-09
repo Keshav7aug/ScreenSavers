@@ -14,10 +14,13 @@ from tkinter import simpledialog
 import json
 import os
 import pathlib
-
+debug = False
 config_dir = pathlib.Path(os.getenv("APPDATA"), "Clock_ScreenSaver")
 config_filepath = config_dir.joinpath("config_clock.json")
-debug = False
+
+def resetConfig():
+    if os.path.exists(config_filepath):
+        os.remove(config_filepath)
 def loadOrientation():
     if not os.path.exists(config_dir):
         os.mkdir(config_dir)
@@ -40,17 +43,24 @@ def init():
     
 def onSelect(i, combo):
     orientation = loadOrientation()
-    orientation[i] = int(combo[i].get())
+    mapper = {
+        "Time": 0,
+        "H": 1,
+        "M": 2,
+        "S": 3,
+        "H:M": 4
+    }
+    orientation[i] = mapper[combo[i].get()]
     saveOrientation(orientation)
 
 def open_settings_dialog():
     root = tk.Tk()
+    options = ["Time","H","M","S","H:M"]
     numberOfMonitors = len(screeninfo.get_monitors())
-    options = list(range(numberOfMonitors))
     orientation = loadOrientation()
-    if len(options) != len(orientation):
-        orientation = options
-    saveOrientation(options)
+    if numberOfMonitors != len(orientation):
+        orientation = [0]*numberOfMonitors
+    saveOrientation(orientation)
     combos = []
     for i in range(numberOfMonitors): 
         combo = ttk.Combobox(root, values=options)
@@ -64,8 +74,6 @@ def getCurrentTime(numberOfMonitors):
     now = datetime.now().strftime("%H:%M:%S")
     theTime = now
     now = now.split(":")
-    if numberOfMonitors == 1 and not debug:
-        now = [f"{now[0]} : {now[1]} : {now[2]}"]
     return now
 
 def getWindows():
@@ -106,13 +114,13 @@ def run_screensaver():
         orientation = orientation[:numberOfMonitors]
         timeInMS = time.time()
         currentDateTime = datetime.now()
-        for j, i in enumerate(orientation):
+        for i, whatToShow in enumerate(orientation):
             if isItTimeToExit():
                 break
-            renderer, window = renderers[j]
+            renderer, window = renderers[i]
             sw, sh = window.size
             renderer.clear()
-            animatedBoard = classifier.applyAnimation(animations=animation, monitorNum=i, currentTime=currentTime, screenWidth=sw, screenHeight=sh, renderer=renderer, timeInMS=timeInMS,currentDateTime=currentDateTime, val=val, numberOfMonitors=numberOfMonitors, **animationArgs)
+            animatedBoard = classifier.applyAnimation(animations=animation, monitorNum=i, currentTime=currentTime, screenWidth=sw, screenHeight=sh, renderer=renderer, timeInMS=timeInMS,currentDateTime=currentDateTime, val=val, numberOfMonitors=numberOfMonitors,whatToShow=whatToShow, **animationArgs)
             for text_texture,text_rect in animatedBoard["data"]:
                 renderer.blit(text_texture, text_rect)
             animationArgs = animatedBoard["args"]
@@ -138,9 +146,9 @@ def handle_arguments():
         run_screensaver()
     elif len(loadOrientation()) == 0 or "/c" in args:
         open_settings_dialog()
-    elif args == "/p":  # Preview
+    if args == "/p":  # Preview
         run_screensaver()  # You can make a mini preview here
 
-if __name__ == "__main__":  
+if __name__ == "__main__":
     handle_arguments()
                 
