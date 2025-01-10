@@ -38,7 +38,7 @@ def init():
     numberOfMonitors = len(screeninfo.get_monitors())
     orientation = loadOrientation()
     if len(orientation) != numberOfMonitors:
-        orientation = list(range(numberOfMonitors))
+        orientation = [0]*numberOfMonitors
     saveOrientation(orientation)
     
 def onSelect(i, combo):
