@@ -1,9 +1,9 @@
 from Animations import odometer, jitter, bouncingBall
-def applyAnimation(animations, **kargs):
+def applyAnimation(animations, theDisplay, animationArgs):
     theThings = {"data": [], "args": {}}
     for animation in animations.split("|"):
         if animation == "odometer":
-            newThing = odometer.animate(**kargs)
+            newThing = odometer.animate(theDisplay, animationArgs)
         elif animation == "jitter":
             newThing = jitter.animate(**kargs)
         elif animation == "bouncingball":

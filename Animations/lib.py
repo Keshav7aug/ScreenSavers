@@ -9,17 +9,7 @@ class Colors:
     blue = (0,0,255,255)
     CARD_COLOR = (30, 30, 30,255)
     yellow = (255,255,0,255)
-def getNextTime(monitorN, currentTime):
-    val = 0
-    if monitorN == 0:
-        val = (currentTime+timedelta(hours=1)).hour
-    elif monitorN == 1:
-        val = (currentTime+timedelta(minutes=1)).minute
-    elif monitorN == 2:
-        val = (currentTime+timedelta(seconds=1)).second
-    if val<10:
-        return f"0{val}"
-    return f"{val}"
+
 
 def getTextToShow(timetext, whatToShow):
     if whatToShow == 0:
