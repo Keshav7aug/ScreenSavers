@@ -1,4 +1,4 @@
-from Animations.lib import getNextTime, getFont, Colors
+from Animations.lib import getFont, Colors
 import time
 import math
 

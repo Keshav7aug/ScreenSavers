@@ -1,7 +1,13 @@
+import screeninfo
 import MultiWindowClock.clock as MWC
 import tkinter as tk
 from tkinter import ttk
 from tkinter import simpledialog
+import pathlib
+import argparse
+import sys
+import os
+import json
 
 def getConfigDir():
     debug = True
@@ -23,7 +29,11 @@ def loadOrientation():
             orientation = json.loads(f.read())
         return orientation
     return []
-    
+
+def convertOrientation(orientation):
+    convertor = ["%H : %M : %S", "%H", "%M", "%S", "%H:%M"]
+    return [convertor[int(val)] for val in orientation]
+
 def saveOrientation(orientation):
     with open(config_filepath,"w") as f:
         f.write(json.dumps(orientation, indent=2))
@@ -75,11 +85,11 @@ def handle_arguments():
         args = sys.argv[1].lower()
     if args == "/s":  # Start screensaver
         init()
-        MWC.run_screensaver(loadOrientation())
+        MWC.run_screensaver(convertOrientation(loadOrientation()))
     elif len(loadOrientation()) == 0 or "/c" in args:
         open_settings_dialog()
     if args == "/p":  # Preview
-        MWC.run_screensaver(loadOrientation())  # You can make a mini preview here
+        MWC.run_screensaver(convertOrientation(loadOrientation()))  # You can make a mini preview here
 
 if __name__ == "__main__":
     config_dir = getConfigDir()

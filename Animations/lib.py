@@ -10,31 +10,9 @@ class Colors:
     CARD_COLOR = (30, 30, 30,255)
     yellow = (255,255,0,255)
 
-
-def getTextToShow(timetext, whatToShow):
-    if whatToShow == 0:
-        text = ' : '.join(timetext)
-    elif whatToShow == 4:
-        text = ' : '.join(timetext[:2])
-    else:
-        text = timetext[whatToShow-1]
-    return text
-
-def getFont(isCurrentTime,i,timeText,sw,sh,selectedFont,renderer,whatToShow=None,shouldDisplayNext=None):
-    r1 = 0.625
-    r2 = 1.1111111111111112
-    fontSize = int(min(sw*r1, sh*r2))//2
-    if isCurrentTime == False:
-        text = f"{timeText}"
-        text_color = Colors.grey
-    else:
-        if shouldDisplayNext == False:
-            fontSize*=2
-        text = getTextToShow(timeText, whatToShow)
-        text_color = Colors.red
-    fontSize = (2*fontSize)//(len(text.replace(" ","")) - text.count(":"))
-    font = pygame.font.SysFont(selectedFont, fontSize)
+def getFont(renderer, fontSize, text_color, text, textFont):
+    fontSize = int(fontSize)
+    font = pygame.font.SysFont(textFont, fontSize)
     text_surface = font.render(text, True, text_color)
-    # sdl2_surface = pygame._sdl2.surface.Surface.from_surface(text_surface)
     text_texture = Texture.from_surface(renderer, text_surface)
     return font.size(text)[1],text_texture

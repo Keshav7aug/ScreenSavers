@@ -11,4 +11,4 @@ class DisplayArea:
         self.y = posy
         self.whatToShow = whatToShow
         self.window = Window(size=(self.width, self.height), position=(self.x, self.y))
-        self.renderer = Renderer(Window)
+        self.renderer = Renderer(self.window)
