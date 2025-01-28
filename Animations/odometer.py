@@ -108,6 +108,6 @@ class Odometer:
                 jitterYN = getProgress(1-self.nextAnimationThresh) * totalHeight
                 posxN, posyN = startPosNextX, startPosNextY + jitterYN
                 text_rect_next = text_texture_next.get_rect(centerx=posx,centery=posy2)
-                animatedBoards.append(text_rect_next)
+                animatedBoards.append((text_texture_next, text_rect_next))
             
         return animatedBoards
