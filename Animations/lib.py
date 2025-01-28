@@ -15,4 +15,4 @@ def getFont(renderer, fontSize, text_color, text, textFont):
     font = pygame.font.SysFont(textFont, fontSize)
     text_surface = font.render(text, True, text_color)
     text_texture = Texture.from_surface(renderer, text_surface)
-    return font.size(text)[1],text_texture
+    return font.get_linesize(),text_texture

@@ -1,5 +1,6 @@
 import math
 from Animations.lib import getFont, Colors
+from datetime import timedelta
 
 class AnimationArgs:
     def __init__(self):
@@ -10,8 +11,8 @@ class Odometer:
     def __init__(self, theDisplay):
         self.font = 'helveticaneuecondensed'
         self.display = theDisplay
-        self.nextAnimationThresh = 0
-        self.currentAnimationThresh = 0
+        self.nextAnimationThresh = 0.9
+        self.currentAnimationThresh = 0.9
 
     def getFontSize(self):
         r1 = 0.625
@@ -24,7 +25,7 @@ class Odometer:
     def canBeAnimated(self):
         theTime = self.whatToShow()
         try:
-            val = int(val)
+            val = int(theTime)
             return True
         except:
             return False
@@ -36,20 +37,10 @@ class Odometer:
         return toShow
 
     def shouldDisplayNext(self):
-        theTime = self.whatToShow()
-        try:
-            val = int(val)
-            return self.getProgress(1) >= self.nextAnimationThresh
-        except:
-            return False
+        return self.getProgress(1) >= self.nextAnimationThresh
 
     def shouldStartAnimation(self):
-        theTime = self.whatToShow()
-        try:
-            val = int(val)
-            return self.getProgress(1) >= self.currentAnimationThresh
-        except:
-            return False
+        return self.getProgress(1) >= self.currentAnimationThresh
 
     def getProgress(self, mul):
         multiplier = 1000
@@ -81,9 +72,12 @@ class Odometer:
 
         
         if not self.canBeAnimated():
-            fSH, text_texture = getFont(self.display.renderer, self.getFontSize()*2, Colors.red, self.whatToShow(), self.font)
             startPosX, startPosY = self.display.width // 2, (self.display.height // 2)
             posx, posy = startPosX, startPosY
+
+            textToShow = self.whatToShow()
+
+            fSH, text_texture = getFont(self.display.renderer, self.getFontSize()*2, Colors.red, textToShow, self.font)
             text_rect = text_texture.get_rect(centerx = posx, centery = posy)
             animatedBoards = [(text_texture,text_rect)]
 
@@ -105,9 +99,9 @@ class Odometer:
                 fSHN, text_texture_next = getFont(self.display.renderer, self.getFontSize(), Colors.grey, self.getNextTime(), self.font)
                 startPosNextX, startPosNextY = startPosX, -fSHN
                 totalHeight =  startPosY - startPosNextY
-                jitterYN = getProgress(1-self.nextAnimationThresh) * totalHeight
+                jitterYN = self.getProgress(1-self.nextAnimationThresh) * totalHeight
                 posxN, posyN = startPosNextX, startPosNextY + jitterYN
-                text_rect_next = text_texture_next.get_rect(centerx=posx,centery=posy2)
+                text_rect_next = text_texture_next.get_rect(centerx = posxN,centery = posyN)
                 animatedBoards.append((text_texture_next, text_rect_next))
             
         return animatedBoards
