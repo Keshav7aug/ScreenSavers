@@ -1,6 +1,6 @@
 from Animations import odometer, jitter, bouncingBall
-def getAnimator(animation, theDisplay):
+def getAnimator(animation):
     animators = {
         "odometer": odometer.Odometer,
     }
-    return animators[animation](theDisplay)
+    return animators[animation]

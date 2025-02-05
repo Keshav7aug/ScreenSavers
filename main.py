@@ -31,7 +31,7 @@ def loadOrientation():
     return []
 
 def convertOrientation(orientation):
-    convertor = ["%H : %M : %S", "%H", "%M", "%S", "%H:%M"]
+    convertor = ["%H:%M:%S", "%H", "%M", "%S", "%H:%M", "%M:%H:%S"]
     return [convertor[int(val)] for val in orientation]
 
 def saveOrientation(orientation):

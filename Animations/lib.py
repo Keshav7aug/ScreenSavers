@@ -10,9 +10,13 @@ class Colors:
     CARD_COLOR = (30, 30, 30,255)
     yellow = (255,255,0,255)
 
+def drawDots(renderer, center=0, radius=0):
+    theCircle = pygame.draw.circle(renderer, Colors.red, center=center, radius=radius)
+    return radius, theCircle
+
 def getFont(renderer, fontSize, text_color, text, textFont):
     fontSize = int(fontSize)
     font = pygame.font.SysFont(textFont, fontSize)
     text_surface = font.render(text, True, text_color)
     text_texture = Texture.from_surface(renderer, text_surface)
-    return font.get_linesize(),text_texture
+    return font,text_texture
