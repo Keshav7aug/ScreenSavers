@@ -1,6 +1,6 @@
-from Animations import odometer, jitter
-def classifyAnimation(animation):
-    if animation == "odometer":
-        return odometer
-    elif animation == "jitter":
-        return jitter
+from Animations import odometer, jitter, bouncingBall
+def getAnimator(animation):
+    animators = {
+        "odometer": odometer.Odometer,
+    }
+    return animators[animation]
