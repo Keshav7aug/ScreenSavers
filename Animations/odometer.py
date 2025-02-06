@@ -83,11 +83,11 @@ class Odometer:
             posx, posy = startPosX, startPosY
 
             textToShow = self.whatToShow()
-            _, text_texture = getFont(self.display.displayScreen.renderer, self.getFontSize(), Colors.red, textToShow, self.font)
+            _, text_texture = getFont(self.display.displayScreen.renderer, self.getFontSize(), Colors.blue, textToShow, self.font)
 
         else:
             shouldDisplayNext = self.shouldDisplayNext()
-            theFont, text_texture = getFont(self.display.displayScreen.renderer, self.getFontSize(), Colors.red, self.whatToShow(), self.font)
+            theFont, text_texture = getFont(self.display.displayScreen.renderer, self.getFontSize(), Colors.blue, self.whatToShow(), self.font)
             fSH = theFont.get_ascent()
             totalHeight = (self.display.height - (self.display.height // 2))
             startPosX, startPosY = self.display.x + (self.display.width // 2), (self.display.height // 2) 
