@@ -9,7 +9,7 @@ def getDisplayObjs(orientation, animation):
     monitors = screeninfo.get_monitors()
     displays = []
     for i, monitor in enumerate(monitors):
-        displayScreen = DisplayScreen(monitor, orientation[i], "odometer", "randomDesigns")
+        displayScreen = DisplayScreen(monitor, orientation[i], "odometer", "chaosGame")
         displays.append(displayScreen)
             
     return displays
@@ -35,11 +35,12 @@ def run_screensaver(orientation, animation = "odometer"):
             renderer = display.renderer
             renderer.draw_color = Colors.black
             renderer.clear()
+            animatedBoards = []
             for unit in display.units:
-                animatedBoards = unit.animator.animate()
-                for text_texture,text_rect in animatedBoards:
-                    renderer.blit(text_texture, text_rect)
-            display.designer.animate()
+                animatedBoards += unit.animator.animate()
+            animatedBoards += display.designer.animate()
+            for text_texture,text_rect in animatedBoards:
+                renderer.blit(text_texture, text_rect)
             renderer.present()
         clock.tick(60)
     pygame.quit()

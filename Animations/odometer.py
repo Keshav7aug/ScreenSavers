@@ -1,6 +1,7 @@
 import math
 from Animations.lib import getFont, Colors, drawDots
 from datetime import timedelta
+import random
 
 class AnimationArgs:
     def __init__(self, text_rect):
@@ -10,6 +11,7 @@ class AnimationArgs:
 class Odometer:
     def __init__(self, display):
         self.font = 'helveticaneuecondensed'
+        self.currentTimeColor = Colors.blue_red
         animationThresh = {
             "%H": 0.99,
             "%M": 0.98,
@@ -76,18 +78,17 @@ class Odometer:
         
 
     def animate(self):
-
         shouldDisplayNext = False
         if not self.canBeAnimated():
             startPosX, startPosY = self.display.x + (self.display.width // 2), (self.display.height // 2)
             posx, posy = startPosX, startPosY
 
             textToShow = self.whatToShow()
-            _, text_texture = getFont(self.display.displayScreen.renderer, self.getFontSize(), Colors.blue, textToShow, self.font)
+            _, text_texture = getFont(self.display.displayScreen.renderer, self.getFontSize(), self.currentTimeColor, textToShow, self.font)
 
         else:
             shouldDisplayNext = self.shouldDisplayNext()
-            theFont, text_texture = getFont(self.display.displayScreen.renderer, self.getFontSize(), Colors.blue, self.whatToShow(), self.font)
+            theFont, text_texture = getFont(self.display.displayScreen.renderer, self.getFontSize(), self.currentTimeColor, self.whatToShow(), self.font)
             fSH = theFont.get_ascent()
             totalHeight = (self.display.height - (self.display.height // 2))
             startPosX, startPosY = self.display.x + (self.display.width // 2), (self.display.height // 2) 

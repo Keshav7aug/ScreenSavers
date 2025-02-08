@@ -9,6 +9,7 @@ class Colors:
     blue = (0,0,255,255)
     CARD_COLOR = (30, 30, 30,255)
     yellow = (255,255,0,255)
+    blue_red = (125, 12, 237,255)
 
 def drawDots(renderer, center=0, radius=0):
     theCircle = pygame.draw.circle(renderer, Colors.red, center=center, radius=radius)
