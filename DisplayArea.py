@@ -30,6 +30,7 @@ class DisplayScreen:
             heightOfUnit = monitor.height/numberOfUnits
         
         self.window = Window(size=(monitor.width, monitor.height), position=(monitor.x, monitor.y))
+        self.window.set_fullscreen(True)
         self.renderer = Renderer(self.window)
         self.designer = classifier.getAnimator(backAnimation)(self)
         self.units = []

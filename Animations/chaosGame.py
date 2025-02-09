@@ -7,8 +7,21 @@ class chaosGame:
 
     def __init__(self, display):
         self.display = display
-        self.colors = [(237, 87, 12, 255), (66, 33, 22, 255), (17, 66, 214, 255), (142, 17, 214, 255), (158, 16, 111, 255), (20, 199, 44, 255), (252, 186, 3, 255), (13, 214, 204, 255)]
+        self.colors = [(237, 87, 12, 255), (255,255,255,255), (17, 66, 214, 255), (142, 17, 214, 255), (158, 16, 111, 255), (20, 199, 44, 255), (252, 186, 3, 255), (13, 214, 204, 255)]
+        self.colors = [
+            (0, 255, 255),    # Bright Cyan
+            (44, 117, 255),   # Electric Blue
+            (50, 205, 50),    # Lime Green
+            (255, 0, 255),    # Magenta
+            (255, 105, 180),  # Hot Pink
+            (255, 255, 0),    # Neon Yellow
+            (255, 165, 0),    # Orange
+            (220, 20, 60),    # Crimson Red
+            (181, 126, 220),  # Lavender
+            (64, 224, 208)    # Turquoise
+        ]
         self.surface = pygame.Surface((self.display.width, self.display.height))
+        self.texture = Texture(self.display.renderer, (self.display.width, self.display.height), target=True)
         self.initialise()
 
 
@@ -52,17 +65,22 @@ class chaosGame:
         elif diceRoll == 4:
             self.rectangle()
         
-        self.tracePointsData = [((random.randint(1, self.display.width), random.randint(1, self.display.height)), Colors.black)]
+        for i, corner in enumerate(self.corners):
+            self.drawPoint(corner, self.colors[i])
+
+        firstPoint = (random.randint(1, self.display.width), random.randint(1, self.display.height))
+
+        self.drawPoint(firstPoint, Colors.black)
+
+        self.lastPoint = firstPoint
 
     def drawPoint(self, point, color):
+        self.display.renderer.target = self.texture
+        if len(color) == 3:
+            color = color + (255,)
         self.display.renderer.draw_color = color
         self.display.renderer.draw_point(point)
-        # posx = int(point[0])
-        # posy = int(point[1])
-        # self.surface.set_at((posx, posy), color)
-        # theTexture = Texture.from_surface(self.display.renderer, self.surface)
-        # theRect = theTexture.get_rect(centerx = posx, centery = posy)
-        # return (theTexture, theRect)
+        self.display.renderer.target = None
 
     def getThePoint(self, p1, p2):
         ratio = (self.factor)/(1-self.factor)
@@ -73,17 +91,9 @@ class chaosGame:
         return (nx1, nx2)
 
     def animate(self):
-        thresh = 10**7
-        if len(self.tracePointsData)>thresh:
-            self.tracePointsData = self.tracePointsData[-(thresh):]
-        for i, corner in enumerate(self.corners):
-            self.drawPoint(corner, self.colors[i])
-        
         cornerSelection = random.randint(0, self.numberOfPoints-1)
-        newTracePoint = self.getThePoint(self.tracePointsData[-1][0], self.corners[cornerSelection])
-        color = self.colors[cornerSelection]
-        self.tracePointsData.append((newTracePoint, color))
-        
-        for point in self.tracePointsData:
-            self.drawPoint(point[0], point[1])
+        newTracePoint = self.getThePoint(self.lastPoint, self.corners[cornerSelection])
+        color = self.colors[cornerSelection % (len(self.colors))]
+        self.drawPoint(newTracePoint, color)
+        self.lastPoint = newTracePoint
         return []
