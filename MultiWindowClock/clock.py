@@ -44,8 +44,7 @@ def run_screensaver(orientation, animation = "odometer"):
             for text_texture,text_rect in animatedBoards:
                 renderer.blit(text_texture, text_rect)
             renderer.present()
-        clock.tick_busy_loop(120)
-        # print(clock.get_fps())
+        clock.tick(1000)
     pygame.quit()
 
    
