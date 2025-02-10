@@ -35,6 +35,7 @@ class chaosGame:
         for option in options:
             for i in range(option[1]):
                 chaosGame.optionsAvailable.append((option[0], i))
+        # chaosGame.optionsAvailable = [(5,0), (5,1)]
         
     def updateOptions(self, selectedOption):
         chaosGame.optionsAvailable = [option for option in chaosGame.optionsAvailable if option != selectedOption]
@@ -102,7 +103,9 @@ class chaosGame:
     def initialisePolygon(self):
         self.getAvailableVertex = self.defaultSelection
         self.factor = 0.5
-        numberOfSides, animationType = random.choice(chaosGame.optionsAvailable)
+        selectedOption = random.choice(chaosGame.optionsAvailable)
+        numberOfSides, animationType = selectedOption
+        self.updateOptions(selectedOption)
         print(numberOfSides, animationType)
         if numberOfSides == 3:
             self.triangle(animationType)
