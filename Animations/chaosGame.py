@@ -2,9 +2,10 @@ import random
 import pygame
 from Animations.lib import Colors
 from pygame._sdl2 import Texture
+import math
 
 class chaosGame:
-
+    optionsAvailable = []
     def __init__(self, display):
         self.display = display
         self.colors = [(237, 87, 12, 255), (255,255,255,255), (17, 66, 214, 255), (142, 17, 214, 255), (158, 16, 111, 255), (20, 199, 44, 255), (252, 186, 3, 255), (13, 214, 204, 255)]
@@ -24,10 +25,21 @@ class chaosGame:
         self.texture = Texture(self.display.renderer, (self.display.width, self.display.height), target=True)
         self.chosenOnethresh = 2
         self.lastSelectedVertex = [-1]*self.chosenOnethresh
+        if len(chaosGame.optionsAvailable) == 0:
+            self.initializeOptions()
         self.initialisePolygon()
 
 
-    def triangle(self):
+    def initializeOptions(self):
+        options = [(3,1),(4,5),(5,2)]
+        for option in options:
+            for i in range(option[1]):
+                chaosGame.optionsAvailable.append((option[0], i))
+        
+    def updateOptions(self, selectedOption):
+        chaosGame.optionsAvailable = [option for option in chaosGame.optionsAvailable if option != selectedOption]
+
+    def triangle(self, diceRoll):
         self.numberOfPoints = 3
         self.corners = [
             ((self.display.width)/2, 0),
@@ -35,8 +47,7 @@ class chaosGame:
             (self.display.width, self.display.height)
         ]
 
-    def rectangle(self):
-        diceRoll = random.randint(0,5)
+    def rectangle(self, diceRoll):
         points = [
             (0, 0),
             (self.display.width, 0),
@@ -68,16 +79,20 @@ class chaosGame:
             points += newPoints
         self.corners = points
 
-    def pentagon(self):
-        diceRoll = random.randint(0,1)
+    def pentagon(self, diceRoll):
         self.numberOfPoints = 5
-        points = [
-            ((self.display.width)/2, 0),
-            (self.display.width, self.display.height/2),
-            (self.display.width, self.display.height),
-            (0, self.display.height),
-            (0, self.display.height/2)
-        ]
+        r = min(self.display.width, self.display.height)
+        l = r*math.sin(math.pi/5)
+        y = (self.display.height/2) - l
+        points = []
+        angle = math.pi/2
+        x0 = self.display.width/2
+        y0 = self.display.height/2
+        for i in range(self.numberOfPoints):
+            nx = x0+r*math.cos(angle)
+            ny = y0+r*math.sin(angle)
+            angle += (2*math.pi/5)
+            points.append((nx, ny))
         if diceRoll == 0:
             self.getAvailableVertex = self.dontChooseCurrent
         elif diceRoll == 1:
@@ -87,13 +102,14 @@ class chaosGame:
     def initialisePolygon(self):
         self.getAvailableVertex = self.defaultSelection
         self.factor = 0.5
-        diceRoll = random.randint(3,4)
-        if diceRoll == 3:
-            self.triangle()
-        elif diceRoll == 4:
-            self.rectangle()
-        elif diceRoll == 5:
-            self.pentagon()
+        numberOfSides, animationType = random.choice(chaosGame.optionsAvailable)
+        print(numberOfSides, animationType)
+        if numberOfSides == 3:
+            self.triangle(animationType)
+        elif numberOfSides == 4:
+            self.rectangle(animationType)
+        elif numberOfSides == 5:
+            self.pentagon(animationType)
         
         for i, corner in enumerate(self.corners):
             self.drawPoint(corner, self.colors[i])
@@ -133,7 +149,7 @@ class chaosGame:
         return availableVertex
 
     def choseOnePlaceAway(self):
-        availableVertex = [self.lastSelectedVertex[-1]+1, self.lastSelectedVertex[-1]-1]
+        availableVertex = [self.lastSelectedVertex[-1], self.lastSelectedVertex[-1]+1, self.lastSelectedVertex[-1]-1]
         availableVertex = [(vertex+self.numberOfPoints) % self.numberOfPoints for vertex in availableVertex]
         return availableVertex
 
