@@ -22,12 +22,13 @@ class chaosGame:
         ]
         self.surface = pygame.Surface((self.display.width, self.display.height))
         self.texture = Texture(self.display.renderer, (self.display.width, self.display.height), target=True)
-        self.initialise()
+        self.chosenOnethresh = 2
+        self.lastSelectedVertex = [-1]*self.chosenOnethresh
+        self.initialisePolygon()
 
 
     def triangle(self):
         self.numberOfPoints = 3
-        self.factor = 0.5
         self.corners = [
             ((self.display.width)/2, 0),
             ((0, self.display.height)),
@@ -35,18 +36,27 @@ class chaosGame:
         ]
 
     def rectangle(self):
-        diceRoll = random.randint(0,1)
+        diceRoll = random.randint(0,5)
         points = [
             (0, 0),
             (self.display.width, 0),
             (self.display.width, self.display.height),
             (0, self.display.height)
         ]
+        self.numberOfPoints = 4
         if diceRoll == 0:
+            self.getAvailableVertex = self.dontChooseCurrent
+        elif diceRoll == 1:
+            self.getAvailableVertex = self.choseOnePlaceAwayAnti
+        elif diceRoll == 2:
+            self.getAvailableVertex = self.choseOnePlaceAway
+        elif diceRoll == 3:
+            self.getAvailableVertex = self.last2AndWhatNot
+        if diceRoll == 4:
             self.numberOfPoints = 5
             self.factor = 2/3
             points.append(((points[0][0]+points[1][0])/2, (points[0][1]+points[3][1])/2))
-        elif diceRoll == 1:
+        elif diceRoll == 5:
             self.numberOfPoints = 8
             self.factor = 2/3
             newPoints = []
@@ -58,12 +68,32 @@ class chaosGame:
             points += newPoints
         self.corners = points
 
-    def initialise(self):
+    def pentagon(self):
+        diceRoll = random.randint(0,1)
+        self.numberOfPoints = 5
+        points = [
+            ((self.display.width)/2, 0),
+            (self.display.width, self.display.height/2),
+            (self.display.width, self.display.height),
+            (0, self.display.height),
+            (0, self.display.height/2)
+        ]
+        if diceRoll == 0:
+            self.getAvailableVertex = self.dontChooseCurrent
+        elif diceRoll == 1:
+            self.getAvailableVertex = self.last2AndWhatNot
+        self.corners = points
+
+    def initialisePolygon(self):
+        self.getAvailableVertex = self.defaultSelection
+        self.factor = 0.5
         diceRoll = random.randint(3,4)
         if diceRoll == 3:
             self.triangle()
         elif diceRoll == 4:
             self.rectangle()
+        elif diceRoll == 5:
+            self.pentagon()
         
         for i, corner in enumerate(self.corners):
             self.drawPoint(corner, self.colors[i])
@@ -90,10 +120,37 @@ class chaosGame:
         nx2 = (y1+(ratio*y2))/(1+ratio)
         return (nx1, nx2)
 
+    def defaultSelection(self):
+        availableVertex = list(range(self.numberOfPoints))
+        return availableVertex
+
+    def dontChooseCurrent(self):
+        availableVertex = [vertex for vertex in range(self.numberOfPoints) if vertex != self.lastSelectedVertex[-1]]
+        return availableVertex
+
+    def choseOnePlaceAwayAnti(self):
+        availableVertex = [vertex for vertex in range(self.numberOfPoints) if vertex != (self.lastSelectedVertex[-1]-1+self.numberOfPoints) % self.numberOfPoints]
+        return availableVertex
+
+    def choseOnePlaceAway(self):
+        availableVertex = [self.lastSelectedVertex[-1]+1, self.lastSelectedVertex[-1]-1]
+        availableVertex = [(vertex+self.numberOfPoints) % self.numberOfPoints for vertex in availableVertex]
+        return availableVertex
+
+    def last2AndWhatNot(self):
+        if self.lastSelectedVertex[-1] == self.lastSelectedVertex[-2]:
+            availableVertex = [vertex for vertex in range(self.numberOfPoints) if vertex != (self.lastSelectedVertex[-1]-1+self.numberOfPoints) % self.numberOfPoints and vertex != (self.lastSelectedVertex[-1]+1) % self.numberOfPoints]
+        else:
+            availableVertex = list(range(self.numberOfPoints))
+        return availableVertex
+
     def animate(self):
-        cornerSelection = random.randint(0, self.numberOfPoints-1)
-        newTracePoint = self.getThePoint(self.lastPoint, self.corners[cornerSelection])
-        color = self.colors[cornerSelection % (len(self.colors))]
+        availableVertex = self.getAvailableVertex()
+        selectedVertext = random.choice(availableVertex)
+        self.lastSelectedVertex.append(selectedVertext)
+        self.lastSelectedVertex = self.lastSelectedVertex[-self.chosenOnethresh:]
+        newTracePoint = self.getThePoint(self.lastPoint, self.corners[selectedVertext])
+        color = self.colors[selectedVertext % (len(self.colors))]
         self.drawPoint(newTracePoint, color)
         self.lastPoint = newTracePoint
         return []
