@@ -35,7 +35,6 @@ class chaosGame:
         for option in options:
             for i in range(option[1]):
                 chaosGame.optionsAvailable.append((option[0], i))
-        # chaosGame.optionsAvailable = [(5,0), (5,1)]
         
     def updateOptions(self, selectedOption):
         chaosGame.optionsAvailable = [option for option in chaosGame.optionsAvailable if option != selectedOption]
@@ -82,17 +81,15 @@ class chaosGame:
 
     def pentagon(self, diceRoll):
         self.numberOfPoints = 5
-        r = min(self.display.width, self.display.height)
-        l = r*math.sin(math.pi/5)
-        y = (self.display.height/2) - l
+        r = min(self.display.width/2, self.display.height/2)
         points = []
-        angle = math.pi/2
+        angle = -math.pi/2
         x0 = self.display.width/2
         y0 = self.display.height/2
         for i in range(self.numberOfPoints):
-            nx = x0+r*math.cos(angle)
-            ny = y0+r*math.sin(angle)
-            angle += (2*math.pi/5)
+            nx = x0+(r*math.cos(angle))
+            ny = y0+(r*math.sin(angle))
+            angle -= (2*math.pi/5)
             points.append((nx, ny))
         if diceRoll == 0:
             self.getAvailableVertex = self.dontChooseCurrent
