@@ -10,7 +10,7 @@ import os
 import json
 
 def getConfigDir():
-    debug = False
+    debug = True
     if not debug:
         config_dir = pathlib.Path(os.getenv("APPDATA"), "Clock_ScreenSaver")
     else:
