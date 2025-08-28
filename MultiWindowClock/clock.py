@@ -12,7 +12,6 @@ def getDisplayObjs(orientation, animation):
     for i, monitor in enumerate(monitors):
         displayScreen = DisplayScreen(monitor, orientation[i], "odometer", "chaosGame")
         displays.append(displayScreen)
-            
     return displays
 
 def isItTimeToExit():
@@ -37,14 +36,16 @@ def run_screensaver(orientation, animation = "odometer"):
             renderer.draw_color = Colors.black
             renderer.clear()
             animatedBoards = []
-            for unit in display.units:
-                animatedBoards += unit.animator.animate()
             display.designer.animate()
             renderer.blit(display.designer.texture)
-            for text_texture,text_rect in animatedBoards:
-                renderer.blit(text_texture, text_rect)
+            for unit in display.units:
+                animatedBoards += unit.animator.animate()
+                renderer.blit(unit.animator.texture)
+            # for text_texture,text_rect in animatedBoards:
+            #     renderer.blit(text_texture, text_rect)
             renderer.present()
         clock.tick(1000)
+        # print(clock.get_fps())
     pygame.quit()
 
    

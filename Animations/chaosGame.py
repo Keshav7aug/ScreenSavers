@@ -32,6 +32,7 @@ class chaosGame:
 
     def initializeOptions(self):
         options = [(3,1),(4,5),(5,2)]
+        options = [(4,5)]
         for option in options:
             for i in range(option[1]):
                 chaosGame.optionsAvailable.append((option[0], i))

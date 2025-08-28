@@ -1,15 +1,13 @@
-import math
 from Animations.lib import getFont, Colors, drawDots
-from datetime import timedelta
-import random
+from Animations.TimeAnimation import TimeAnimation
 
 class AnimationArgs:
     def __init__(self, text_rect):
         self.text_rect = text_rect
 
-
-class Odometer:
+class Odometer(TimeAnimation):
     def __init__(self, display):
+        super().__init__(display)
         self.font = 'helveticaneuecondensed'
         self.currentTimeColor = Colors.blue_red
         animationThresh = {
@@ -17,66 +15,16 @@ class Odometer:
             "%M": 0.98,
             "%S": 0.90
         }
-        self.display = display
         val = display.whatToShow
         self.nextAnimationThresh = animationThresh[val] if val in animationThresh else 1
-        self.currentAnimationThresh = self.nextAnimationThresh
-
-    def getFontSize(self):
-        r1 = 0.625
-        r2 = 1.1111111111111112
-        fontSize = int(min(self.display.width * r1, self.display.height * r2))
-        theTime = self.whatToShow()
-        fontSize = (2*fontSize)//(len(theTime.replace(" ","")) - theTime.count(":"))
-        return fontSize
-
-    def canBeAnimated(self):
-        theTime = self.whatToShow()
-        try:
-            val = int(theTime)
-            return True
-        except:
-            return False
-
-    def whatToShow(self):
-        val = self.display.whatToShow
-        theTime = self.display.displayScreen.currentTime
-        try:
-            toShow = theTime.strftime(val)
-        except:
-            return val
-        return toShow
+        self.currentAnimationThresh = self.nextAnimationThresh        
 
     def shouldDisplayNext(self):
         return self.getProgress(1) >= self.nextAnimationThresh
 
     def shouldStartAnimation(self):
         return self.getProgress(1) >= self.currentAnimationThresh
-
-    def getProgress(self, mul):
-        multiplier = 1000
-        currentTime = self.display.displayScreen.timeInMs * multiplier
-        divisiors = {
-            "%H": 3600,
-            "%M": 60,
-            "%S": 1
-        }
-        divisor = divisiors[self.display.whatToShow] * multiplier
-        prevTimeUnit = divisor * (math.floor(currentTime / divisor))
-        timeElapsed =  currentTime - prevTimeUnit - (divisor * (1 - mul))
-        progress = (round(timeElapsed) / (divisor * mul))
-        return progress
-
-    def getNextTime(self):
-        whatToShow = self.display.whatToShow
-        theNextDict = {
-            "%H": 3600,
-            "%M": 60,
-            "%S": 1
-        }
-        return (self.display.displayScreen.currentTime + timedelta(seconds = theNextDict[whatToShow])).strftime(whatToShow)
-        
-
+    
     def animate(self):
         shouldDisplayNext = False
         if not self.canBeAnimated():
